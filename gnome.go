@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 
@@ -12,12 +13,12 @@ const darkTheme string = "prefer-dark"
 
 // const lightTheme = "prefer-light"
 
-func IsGnome(s string) bool {
+func isGnome(s string) bool {
 	return strings.Contains(s, "GNOME") || s == "Unity" || s == "Pantheon"
 }
 
 func CurrentGnomeWallpaper() (string, error) {
-	currentTheme, err := CurrentGnomeTheme()
+	currentTheme, err := currentGnomeTheme()
 	if err != nil {
 		return "", err
 	}
@@ -29,9 +30,9 @@ func CurrentGnomeWallpaper() (string, error) {
 	}
 }
 
-func CurrentGnomeTheme() (string, error) {
-	if !IsGnome(DetectedDesktop) {
-		return "", nil
+func currentGnomeTheme() (string, error) {
+	if !isGnome(DetectedDesktop) {
+		return "", fmt.Errorf("Not a Gnome desktop. You should not use it.")
 	}
 	return parseDconf("gsettings", "get", "org.gnome.desktop.interface", "color-scheme")
 }
@@ -42,8 +43,10 @@ func parseDconf(command string, args ...string) (string, error) {
 		return "", err
 	}
 
+	fmt.Println(output)
 	// unquote string
 	var unquoted string
+
 	// the output is quoted with single quotes, which cannot be unquoted using strconv.Unquote, but it is valid yaml
 	err = yaml.UnmarshalStrict(output, &unquoted)
 	if err != nil {

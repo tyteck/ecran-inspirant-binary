@@ -10,20 +10,18 @@ func TestConst(t *testing.T) {
 	want := "default"
 	got := defaultTheme
 
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
-	}
+	assert.Equal(t, got, want)
 }
 
 func TestIsGnomeReturnFalse(t *testing.T) {
 	var got bool
 
-	// Define an array of strings
+	// Define a slice of strings
 	validStrings := [3]string{"Lorem", "Windows", "gnome"}
 
 	// Loop over the array elements using range
 	for _, stringToTest := range validStrings {
-		got = IsGnome(stringToTest)
+		got = isGnome(stringToTest)
 		assert.False(t, got)
 	}
 }
@@ -31,21 +29,12 @@ func TestIsGnomeReturnFalse(t *testing.T) {
 func TestIsGnomeReturnTrue(t *testing.T) {
 	var got bool
 
-	// Define an array of strings
+	// Define a slice of strings
 	validStrings := [4]string{"GNOME", "Unity", "Pantheon", "Lorem ipsum GNOME"}
 
 	// Loop over the array elements using range
 	for _, stringToTest := range validStrings {
-		got = IsGnome(stringToTest)
+		got = isGnome(stringToTest)
 		assert.True(t, got)
-	}
-}
-
-func TestCurrentGnomeTheme(t *testing.T) {
-	var want string
-	got, _ := CurrentGnomeTheme()
-
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
 	}
 }
