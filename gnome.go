@@ -1,3 +1,4 @@
+// +linux
 package main
 
 import (
@@ -13,7 +14,7 @@ const darkTheme string = "prefer-dark"
 
 // const lightTheme = "prefer-light"
 
-func isGnome(s string) bool {
+func IsGnome(s string) bool {
 	return strings.Contains(s, "GNOME") || s == "Unity" || s == "Pantheon"
 }
 
@@ -31,7 +32,7 @@ func CurrentGnomeWallpaper() (string, error) {
 }
 
 func currentGnomeTheme() (string, error) {
-	if !isGnome(DetectedDesktop) {
+	if !IsGnome(DetectedDesktop) {
 		return "", fmt.Errorf("Not a Gnome desktop. You should not use it.")
 	}
 	return parseDconf("gsettings", "get", "org.gnome.desktop.interface", "color-scheme")

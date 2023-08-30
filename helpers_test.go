@@ -13,6 +13,6 @@ func TestRemoveProtocol(t *testing.T) {
 	prefixes := [5]string{"http://", "ftp://", "https://", "file://", ""}
 	for _, prefix := range prefixes {
 		got := RemoveProtocol(prefix + want)
-		assert.Equal(t, got, want)
+		assert.Equal(t, want, got)
 	}
 }
