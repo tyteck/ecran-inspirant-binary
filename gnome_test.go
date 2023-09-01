@@ -21,7 +21,8 @@ func TestIsGnomeReturnFalse(t *testing.T) {
 
 	// Loop over the array elements using range
 	for _, stringToTest := range validStrings {
-		got = IsGnome(stringToTest)
+		XdgCurrentDesktop = stringToTest
+		got = IsGnome()
 		assert.False(t, got)
 	}
 }
@@ -34,7 +35,16 @@ func TestIsGnomeReturnTrue(t *testing.T) {
 
 	// Loop over the array elements using range
 	for _, stringToTest := range validStrings {
-		got = IsGnome(stringToTest)
+		XdgCurrentDesktop = stringToTest
+		got = IsGnome()
 		assert.True(t, got)
 	}
+}
+
+func TestCurrentGnomeTheme(t *testing.T) {
+	t.Run("should be one of preset", func(t *testing.T) {
+		var values = []string{defaultTheme, darkTheme, lightTheme}
+		theme, _ := CurrentGnomeTheme()
+		assert.True(t, InArray(theme, values))
+	})
 }

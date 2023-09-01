@@ -1,16 +1,9 @@
-//go:build linux
-
 package main
 
 import (
-	"os/user"
-	"path/filepath"
+	"os"
 )
 
-func getCacheDir() (string, error) {
-	usr, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-	return filepath.Join(usr.HomeDir, ".cache"), nil
+func GetFilePath() string {
+	return os.TempDir() + "/" + YoutubeId() + ".jpg"
 }

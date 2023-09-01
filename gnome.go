@@ -1,9 +1,10 @@
-// +linux
+// go:+build linux
 package main
 
 import (
 	"fmt"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -11,15 +12,14 @@ import (
 
 const defaultTheme string = "default"
 const darkTheme string = "prefer-dark"
+const lightTheme = "prefer-light"
 
-// const lightTheme = "prefer-light"
-
-func IsGnome(s string) bool {
-	return strings.Contains(s, "GNOME") || s == "Unity" || s == "Pantheon"
+func IsGnome() bool {
+	return strings.Contains(XdgCurrentDesktop, "GNOME") || XdgCurrentDesktop == "Unity" || XdgCurrentDesktop == "Pantheon"
 }
 
-func CurrentGnomeWallpaper() (string, error) {
-	currentTheme, err := currentGnomeTheme()
+func CurrentGnomeWallPaper() (string, error) {
+	currentTheme, err := CurrentGnomeTheme()
 	if err != nil {
 		return "", err
 	}
@@ -31,9 +31,9 @@ func CurrentGnomeWallpaper() (string, error) {
 	}
 }
 
-func currentGnomeTheme() (string, error) {
-	if !IsGnome(DetectedDesktop) {
-		return "", fmt.Errorf("Not a Gnome desktop. You should not use it.")
+func CurrentGnomeTheme() (string, error) {
+	if !IsGnome() {
+		return "", fmt.Errorf("not a gnome desktop, you should not use it")
 	}
 	return parseDconf("gsettings", "get", "org.gnome.desktop.interface", "color-scheme")
 }
@@ -44,7 +44,6 @@ func parseDconf(command string, args ...string) (string, error) {
 		return "", err
 	}
 
-	fmt.Println(output)
 	// unquote string
 	var unquoted string
 
@@ -55,4 +54,22 @@ func parseDconf(command string, args ...string) (string, error) {
 	}
 
 	return RemoveProtocol(unquoted), nil
+}
+
+func SetWallPaperFromFile(filePath string) error {
+	currentTheme, err := CurrentGnomeTheme()
+	if err != nil {
+		return err
+	}
+
+	var keyToUse string
+	switch currentTheme {
+	case darkTheme:
+		keyToUse = "picture-uri-dark"
+	default:
+		keyToUse = "picture-uri"
+	}
+
+	return exec.Command("gsettings", "set", "org.gnome.desktop.background", keyToUse, strconv.Quote("file://"+filePath)).Run()
+
 }
